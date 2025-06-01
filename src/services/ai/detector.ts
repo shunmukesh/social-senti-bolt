@@ -1,9 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import natural from 'natural';
 import { Account } from '../../types';
-
-const tokenizer = new natural.WordTokenizer();
-const tfidf = new natural.TfIdf();
 
 // Load pre-trained model for account analysis
 let model: tf.LayersModel | null = null;
@@ -70,10 +66,15 @@ function extractAccountFeatures(account: Partial<Account>): number[] {
   
   // Bio analysis
   if (account.bio) {
-    const tokens = tokenizer.tokenize(account.bio.toLowerCase());
-    tfidf.addDocument(tokens);
-    const suspiciousTermScore = calculateSuspiciousTermScore(tokens);
-    features.push(suspiciousTermScore);
+    const suspiciousTerms = new Set([
+      'official', 'verified', 'real', 'authentic', 'genuine',
+      'dm', 'message', 'contact', 'urgent', 'emergency',
+      'classified', 'confidential', 'secret', 'restricted'
+    ]);
+    
+    const words = account.bio.toLowerCase().split(/\s+/);
+    const suspiciousCount = words.filter(word => suspiciousTerms.has(word)).length;
+    features.push(suspiciousCount / words.length);
   } else {
     features.push(0);
   }
@@ -85,17 +86,6 @@ function extractAccountFeatures(account: Partial<Account>): number[] {
   features.push(networkScore);
   
   return features;
-}
-
-function calculateSuspiciousTermScore(tokens: string[]): number {
-  const suspiciousTerms = new Set([
-    'official', 'verified', 'real', 'authentic', 'genuine',
-    'dm', 'message', 'contact', 'urgent', 'emergency',
-    'classified', 'confidential', 'secret', 'restricted'
-  ]);
-  
-  const suspiciousCount = tokens.filter(token => suspiciousTerms.has(token)).length;
-  return suspiciousCount / tokens.length;
 }
 
 function generateDetectionReasons(
