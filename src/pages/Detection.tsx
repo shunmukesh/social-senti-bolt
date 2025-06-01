@@ -47,3 +47,5 @@ const Detection: React.FC = () => {
     </div>
   )
 }
+
+export default Detection

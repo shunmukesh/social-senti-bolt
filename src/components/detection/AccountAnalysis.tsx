@@ -97,3 +97,5 @@ const AccountAnalysis: React.FC = () => {
     </div>
   )
 }
+
+export default AccountAnalysis
