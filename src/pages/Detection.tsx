@@ -2,6 +2,7 @@ import React from 'react'
 import { useApp } from '../contexts/AppContext'
 import AccountList from '../components/detection/AccountList'
 import AccountDetail from '../components/detection/AccountDetail'
+import AccountAnalysis from '../components/detection/AccountAnalysis'
 import { motion } from 'framer-motion'
 
 const Detection: React.FC = () => {
@@ -10,8 +11,11 @@ const Detection: React.FC = () => {
   return (
     <div className="h-[calc(100vh-6.5rem)]">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-        <div className="lg:col-span-1 h-full">
-          <AccountList onSelectAccount={setSelectedAccount} />
+        <div className="lg:col-span-1 h-full flex flex-col gap-6">
+          <AccountAnalysis />
+          <div className="flex-1">
+            <AccountList onSelectAccount={setSelectedAccount} />
+          </div>
         </div>
         
         <div className="lg:col-span-2 h-full">
@@ -43,5 +47,3 @@ const Detection: React.FC = () => {
     </div>
   )
 }
-
-export default Detection
